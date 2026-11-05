@@ -1,0 +1,64 @@
+[build]
+  # Build the BentoPDF app (vite) and bundle the VitePress docs under /docs
+  command = "npx vite build && npm run docs:build && node scripts/include-docs-in-dist.js"
+  publish = "dist"
+
+[build.environment]
+  NODE_OPTIONS = "--max-old-space-size=4096"
+
+# Language-prefixed URLs (/en/, /de/, /zh/, /vi/) map to the same pages
+[[redirects]]
+  from = "/en/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/de/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/zh/*"
+  to = "/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/vi/*"
+  to = "/:splat"
+  status = 200
+
+# Cross-origin isolation is required for SharedArrayBuffer (LibreOffice / WASM workers)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+
+# Pre-gzipped LibreOffice assets must be served with Content-Encoding: gzip
+[[headers]]
+  for = "/libreoffice-wasm/soffice.wasm.gz"
+  [headers.values]
+    Content-Type = "application/wasm"
+    Content-Encoding = "gzip"
+    Vary = "Accept-Encoding"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/libreoffice-wasm/soffice.data.gz"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Content-Encoding = "gzip"
+    Vary = "Accept-Encoding"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
