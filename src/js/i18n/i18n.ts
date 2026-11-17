@@ -24,7 +24,7 @@ export const getLanguageFromUrl = (): SupportedLanguage => {
         return storedLang as SupportedLanguage;
     }
 
-    return 'en';
+    return 'zh';
 };
 
 let initialized = false;
